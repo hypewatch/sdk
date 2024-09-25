@@ -184,6 +184,7 @@ export class TokenAccount {
     this.supply = Number(buf.readBigInt64LE(TokenAccountOffsets.Supply)) / baseCrncyDecsFactor;
     this.address = getStringFromBuffer(buf, TokenAccountOffsets.Address, NetworkStringLength);
     this.slot = Number(buf.readBigInt64LE(TokenAccountOffsets.Slot));
+    this.network = buf.readUint32LE(TokenAccountOffsets.Network);
     this.allTimeBaseCrncyVolume = Number(buf.readBigInt64LE(TokenAccountOffsets.AllTimeBaseCrncyVolume)) / baseCrncyDecsFactor;
     this.allTimeTokensVolume = Number(buf.readBigInt64LE(TokenAccountOffsets.AllTimeTokensVolume)) / baseCrncyDecsFactor;
     this.allTimeTradesCount = Number(buf.readBigInt64LE(TokenAccountOffsets.AllTimeTradesCount));
