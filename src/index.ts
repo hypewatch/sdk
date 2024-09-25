@@ -3,6 +3,7 @@ import {
     Report, Event, RootAccountTag, ClientAccountTag, HYPE_SEED, TradeArgs, readPk,
     NicknameStringLength,
     NetworkStringLength,
+    ChangeClientDataArgs,
 } from './types';
 import {
     ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID
@@ -179,6 +180,23 @@ export async function burn(args: TradeArgs): Promise<TransactionInstruction> {
             { pubkey: TOKEN_2022_PROGRAM_ID, isSigner: false, isWritable: false },
             { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
             { pubkey: ASSOCIATED_TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
+        ],
+        programId: args.programId,
+        data: buf,
+    });
+    return instruction;
+}
+
+export function changeClientData(args: ChangeClientDataArgs): TransactionInstruction {
+    const clientAccount = findClientAccountAddress(args.programId, args.wallet, args.root.version);
+    var buf: Buffer;
+    buf = Buffer.alloc(40);
+    buf.writeUint8(3, 0);
+    buf.write(args.nickname, 8, Math.min(NicknameStringLength, args.nickname.length), 'utf-8');
+    const instruction = new TransactionInstruction({
+        keys: [
+            { pubkey: args.wallet, isSigner: true, isWritable: true },
+            { pubkey: clientAccount, isSigner: false, isWritable: true },
         ],
         programId: args.programId,
         data: buf,

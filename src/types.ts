@@ -382,3 +382,17 @@ export interface TradeArgs {
   limit?: number;
 }
 
+/**
+ * @property {Connection} connection @solana/web3.js Connection
+ * @property {RootAccount} root RootAccount instance
+ * @property {PublicKey} wallet Client's wallet address
+ * @property {string} nickname New client's nickname 
+ * @property {PublicKey} programId Smart contract address
+ */
+export interface ChangeClientDataArgs {
+  connection: Connection;
+  root: RootAccount;
+  wallet: PublicKey;
+  nickname: string;
+  programId: PublicKey;
+}
