@@ -191,7 +191,7 @@ export function changeClientData(args: ChangeClientDataArgs): TransactionInstruc
     const clientAccount = findClientAccountAddress(args.programId, args.wallet, args.root.version);
     var buf: Buffer;
     buf = Buffer.alloc(40);
-    buf.writeUint8(3, 0);
+    buf.writeUint8(4, 0);
     buf.write(args.nickname, 8, Math.min(NicknameStringLength, args.nickname.length), 'utf-8');
     const instruction = new TransactionInstruction({
         keys: [
