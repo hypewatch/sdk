@@ -51,7 +51,7 @@ export function findRootAccountAddress(programId: PublicKey, version: number): P
 
 export function findTokenAccountAddress(programId: PublicKey, networkId: number, address: string, version: number): PublicKey {
   let buf = Buffer.alloc(32);
-  buf.write(address, 0, address.length, 'utf-8');
+  buf.write(address.toLowerCase(), 0, address.length, 'utf-8');
   buf.writeInt32LE(networkId, 24);
   buf.writeInt32LE(version, 28);
   const [hypeAuthority] = PublicKey.findProgramAddressSync([HYPE_SEED], programId);
@@ -111,7 +111,7 @@ export async function mint(args: TradeArgs): Promise<{
     if (args.limit != undefined && args.limit > 0) {
         buf.writeBigInt64LE(BigInt(args.limit * 1000000), 40);
     }
-    buf.write(args.address, 8, Math.min(NetworkStringLength, args.address.length), 'utf-8');
+    buf.write(args.address.toLowerCase(), 8, Math.min(NetworkStringLength, args.address.length), 'utf-8');
     const instruction = new TransactionInstruction({
         keys: [
             { pubkey: args.wallet, isSigner: true, isWritable: true },
