@@ -241,11 +241,13 @@ export function getReports(logs: string[], decsFactor: number): Report[] {
                         report: {
                             clientId: getU64(fields[1]),
                             orderId: getU64(fields[2]),
-                            networkId: getU32(fields[3]),
-                            tokenId: getU32(fields[4]),
-                            address: getString(fields[5]),
-                            time: getTime(fields[6]),
-                            slot: getU64(fields[7]),
+                            tokenId: getU64(fields[3]),
+                            networkId: getU32(fields[4]),
+                            mint: new PublicKey(Buffer.from(fields[5], 'base64')),
+                            creator: new PublicKey(Buffer.from(fields[6], 'base64')),
+                            address: getString(fields[7]),
+                            time: getTime(fields[8]),
+                            slot: getU64(fields[9]),
                         }
                     });
                     break;
@@ -256,11 +258,20 @@ export function getReports(logs: string[], decsFactor: number): Report[] {
                         report: {
                             clientId: getU64(fields[1]),
                             orderId: getU64(fields[2]),
-                            tokenId: getU32(fields[3]),
-                            tokensAmount: getU64(fields[4]),
-                            baseCrncyAmount: getU64(fields[5]),
-                            time: getTime(fields[6]),
-                            slot: getU64(fields[7]),
+                            tokenId: getU64(fields[3]),
+                            networkId: getU32(fields[4]),
+                            mint: new PublicKey(Buffer.from(fields[5], 'base64')),
+                            creator: new PublicKey(Buffer.from(fields[6], 'base64')),
+                            address: getString(fields[7]),
+                            supply: getU64(fields[8]) / decsFactor,
+                            creationTime: getTime(fields[9]),
+                            allTimeTradesCount: getU64(fields[10]),
+                            allTimeBaseCrncyVolume: getU64(fields[11]) / decsFactor,
+                            allTimeTokensVolume: getU64(fields[12]) / decsFactor,
+                            tokensAmount: getU64(fields[13]) / decsFactor,
+                            baseCrncyAmount: getU64(fields[14]) / decsFactor,
+                            time: getTime(fields[15]),
+                            slot: getU64(fields[16]),
                         }
                     });
                     break;
@@ -271,11 +282,20 @@ export function getReports(logs: string[], decsFactor: number): Report[] {
                         report: {
                             clientId: getU64(fields[1]),
                             orderId: getU64(fields[2]),
-                            tokenId: getU32(fields[3]),
-                            tokensAmount: getU64(fields[4]),
-                            baseCrncyAmount: getU64(fields[5]),
-                            time: getTime(fields[6]),
-                            slot: getU64(fields[7]),
+                            tokenId: getU64(fields[3]),
+                            networkId: getU32(fields[4]),
+                            mint: new PublicKey(Buffer.from(fields[5], 'base64')),
+                            creator: new PublicKey(Buffer.from(fields[6], 'base64')),
+                            address: getString(fields[7]),
+                            supply: getU64(fields[8]) / decsFactor,
+                            creationTime: getTime(fields[9]),
+                            allTimeTradesCount: getU64(fields[10]),
+                            allTimeBaseCrncyVolume: getU64(fields[11]) / decsFactor,
+                            allTimeTokensVolume: getU64(fields[12]) / decsFactor,
+                            tokensAmount: getU64(fields[13]) / decsFactor,
+                            baseCrncyAmount: getU64(fields[14]) / decsFactor,
+                            time: getTime(fields[15]),
+                            slot: getU64(fields[16]),
                         }
                     });
                     break;

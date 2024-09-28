@@ -299,9 +299,11 @@ export interface NewNetworkReport {
 /**
  * @property {number} orderId Event order ID
  * @property {number} clientId Creator's client ID
- * @property {number} networkId Network ID
- * @property {PublicKey} address Token address
  * @property {number} tokenId New token ID
+ * @property {number} networkId Network ID
+ * @property {PublicKey} mint Token mint
+ * @property {PublicKey} creator Token creator public key
+ * @property {string} address Token address
  * @property {Date} time Event time
  * @property {number} slot Event slot
  */
@@ -309,6 +311,8 @@ export interface NewTokenReport {
   orderId: number;
   clientId: number;
   networkId: number;
+  mint: PublicKey;
+  creator: PublicKey;
   address: string;
   tokenId: number;
   time: Date;
@@ -319,17 +323,35 @@ export interface NewTokenReport {
  * @property {number} orderId Event order ID
  * @property {number} clientId Client ID
  * @property {number} tokenId Token ID
+ * @property {number} networkId Token ID
+ * @property {PublicKey} mint Token mint
+ * @property {PublicKey} creator Token creator public key
+ * @property {string} address Token address
+ * @property {number} supply Token supply
+ * @property {Date} creationTime Creation time
+ * @property {number} allTimeTradesCount Token all time trades count
+ * @property {number} allTimeBaseCrncyVolume Token all time base currency volume
+ * @property {number} allTimeTokensVolume Token all time tokensvolume
  * @property {number} baseCrncyAmount Trade's base currency amount 
  * @property {number} tokenId Traded tokens amount
  * @property {Date} time Event time
  * @property {number} slot Event slot
  */
 export interface MintReport {
-  orderId: number;
   clientId: number;
+  orderId: number;
   tokenId: number;
-  baseCrncyAmount: number;
+  networkId: number;
+  mint: PublicKey;
+  creator: PublicKey;
+  address: string;
+  supply: number;
+  creationTime: Date;
+  allTimeTradesCount: number;
+  allTimeBaseCrncyVolume: number;
+  allTimeTokensVolume: number;
   tokensAmount: number;
+  baseCrncyAmount: number;
   time: Date;
   slot: number;
 }
@@ -338,17 +360,35 @@ export interface MintReport {
  * @property {number} orderId Event order ID
  * @property {number} clientId Client ID
  * @property {number} tokenId Token ID
+ * @property {number} networkId Token ID
+ * @property {PublicKey} mint Token mint
+ * @property {PublicKey} creator Token creator public key
+ * @property {string} address Token address
+ * @property {number} supply Token supply
+ * @property {Date} creationTime Creation time
+ * @property {number} allTimeTradesCount Token all time trades count
+ * @property {number} allTimeBaseCrncyVolume Token all time base currency volume
+ * @property {number} allTimeTokensVolume Token all time tokensvolume
  * @property {number} baseCrncyAmount Trade's base currency amount 
  * @property {number} tokenId Traded tokens amount
  * @property {Date} time Event time
  * @property {number} slot Event slot
  */
 export interface BurnReport {
-  orderId: number;
   clientId: number;
+  orderId: number;
   tokenId: number;
-  baseCrncyAmount: number;
+  networkId: number;
+  mint: PublicKey;
+  creator: PublicKey;
+  address: string;
+  supply: number;
+  creationTime: Date;
+  allTimeTradesCount: number;
+  allTimeBaseCrncyVolume: number;
+  allTimeTokensVolume: number;
   tokensAmount: number;
+  baseCrncyAmount: number;
   time: Date;
   slot: number;
 }
@@ -397,3 +437,4 @@ export interface ChangeClientDataArgs {
   nickname: string;
   programId: PublicKey;
 }
+
