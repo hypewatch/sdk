@@ -102,7 +102,7 @@ export async function mint(args: TradeArgs): Promise<{
         TOKEN_2022_PROGRAM_ID
     );
     var buf = Buffer.alloc(80);
-    buf.writeUint8(2, 0);
+    buf.writeUint8(4, 0);
     buf.writeUint32LE(args.networkId, 4);
     buf.writeBigInt64LE(BigInt(args.amount * 1000000), 32);
     if (args.nickname != undefined) {
@@ -155,7 +155,7 @@ export async function burn(args: TradeArgs): Promise<TransactionInstruction> {
     );
     var buf: Buffer;
     buf= Buffer.alloc(56);
-    buf.writeUint8(3, 0);
+    buf.writeUint8(5, 0);
     buf.writeBigInt64LE(BigInt(args.amount * 1000000), 8);
     if (args.nickname != undefined) {
         buf.write(args.nickname, 24, Math.min(NicknameStringLength, args.nickname.length), 'utf-8');
@@ -191,7 +191,7 @@ export function changeClientData(args: ChangeClientDataArgs): TransactionInstruc
     const clientAccount = findClientAccountAddress(args.programId, args.wallet, args.root.version);
     var buf: Buffer;
     buf = Buffer.alloc(40);
-    buf.writeUint8(4, 0);
+    buf.writeUint8(6, 0);
     buf.write(args.nickname, 8, Math.min(NicknameStringLength, args.nickname.length), 'utf-8');
     const instruction = new TransactionInstruction({
         keys: [

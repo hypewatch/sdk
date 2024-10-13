@@ -1,12 +1,14 @@
 import { PublicKey, Connection } from "@solana/web3.js";
 
-export const RootAccountTag = 1;
-export const TokenAccountTag = 2;
-export const ClientAccountTag = 3;
+export const RootAccountTag = 2;
+export const TokenAccountTag = 3;
+export const ClientAccountTag = 4;
   
 export const NetworkStringLength = 32;
 export const NicknameStringLength = 32;
 export const AddressStringLength = 24;
+export const MaskStringLength = 64;
+export const NetworkRecordLength = 136;
 
 export const HYPE_SEED = Buffer.from("hypewtch");
 
@@ -26,27 +28,56 @@ function getStringFromBuffer(buf: Buffer, start: number, maxLength: number): str
   return str;
 }
 
+export enum NetworkRecordOffsets {
+  MaxLength=0,
+  Validator = 8,
+  Descriptor = 40,
+  Mask=72
+}
+
+export class NetworkRecord {
+  maxLength: number = AddressStringLength;
+  validator: PublicKey = new PublicKey(0);
+  descriptor: string = "";
+  mask: string = "";
+  unpack(buf: Buffer, offset: number) {
+    this.maxLength = buf.readInt8(offset + NetworkRecordOffsets.MaxLength);
+    this.validator = readPk(buf, offset + NetworkRecordOffsets.Validator);
+    this.descriptor = getStringFromBuffer(buf, offset + NetworkRecordOffsets.Descriptor, NetworkStringLength);
+    this.mask = getStringFromBuffer(buf, offset + NetworkRecordOffsets.Mask, MaskStringLength);
+  }
+}
+
 export enum RootAccountOffsets {
-    Tag = 0,
-    Version = 4,
-    Admin = 8,
-    FeeWallet = 40,
-    BaseCrncyMint = 72,
-    BaseCrncyProgramAddress = 104,
-    ClientsCount = 136,
-    TokensCount = 144,
-    Fees = 152,
-    NetworksCount = 160,
-    BaseCrncyDecsFactor = 164,
-    Slot = 168,
-    Time = 176,
-    Decimals = 180,
-    Supply = 184,
-    Tvl = 192,
-    Counter = 200,
-    AllTimeBaseCrncyVolume = 208,
-    AllTimeTokensVolume = 224,
-    NetworkRecords = 240,
+  Tag = 0,
+  Version = 4,
+  Admin = 8,
+  FeeWallet = 40,
+  BaseCrncyMint = 72,
+  BaseCrncyProgramAddress = 104,
+  ClientsCount = 136,
+  TokensCount = 144,
+  Fees = 152,
+  NetworksCount = 160,
+  BaseCrncyDecsFactor = 164,
+  Slot = 168,
+  Time = 176,
+  Decimals = 180,
+  Supply = 184,
+  Tvl = 192,
+  Counter = 200,
+  AllTimeBaseCrncyVolume = 208,
+  AllTimeTokensVolume = 224,
+  HolderFees = 240,
+  InitPrice = 248,
+  Slope = 256,
+  FeeRatio = 264,
+  FeeRate = 272,
+  CreationFee = 280,
+  MaxNetworksCount = 288,
+  CreationTime = 292,
+  MinFees = 296,
+  NetworkRecords = 304,
 }
 
 /**
@@ -90,7 +121,16 @@ export class RootAccount {
   counter: number = 0;
   allTimeBaseCrncyVolume: number = 0;
   allTimeTokensVolume: number = 0;
-  networks: string[] = [];
+  holderFees: number = 0;
+  initPrice: number = 1;
+  slope: number = 0.0001;
+  feeRatio = 0.7;
+  feeRate = 0.01;
+  creationFee = 1;
+  maxNetworksCount = 0;
+  creationTime = new Date(0);
+  minFees = 0;
+  networks: NetworkRecord[] = [];
   
   update(buf: Buffer) {
     this.tag = buf.readUint32LE(RootAccountOffsets.Tag);
@@ -112,10 +152,21 @@ export class RootAccount {
     this.counter = Number(buf.readBigInt64LE(RootAccountOffsets.Counter));
     this.allTimeBaseCrncyVolume = Number(buf.readBigInt64LE(RootAccountOffsets.AllTimeBaseCrncyVolume)) / this.baseCrncyDecsFactor;
     this.allTimeTokensVolume = Number(buf.readBigInt64LE(RootAccountOffsets.AllTimeTokensVolume)) / this.baseCrncyDecsFactor;
+    this.holderFees = Number(buf.readBigInt64LE(RootAccountOffsets.HolderFees)) / this.baseCrncyDecsFactor;
+    this.initPrice = buf.readDoubleLE(RootAccountOffsets.InitPrice);
+    this.slope = buf.readDoubleLE(RootAccountOffsets.Slope);
+    this.feeRatio = buf.readDoubleLE(RootAccountOffsets.FeeRatio);
+    this.feeRate = buf.readDoubleLE(RootAccountOffsets.FeeRate);
+    this.creationFee = buf.readDoubleLE(RootAccountOffsets.CreationFee);
+    this.maxNetworksCount = buf.readUint32LE(RootAccountOffsets.MaxNetworksCount);
+    this.creationTime = new Date(buf.readUint32LE(RootAccountOffsets.CreationTime) * 1000);
+    this.minFees = buf.readDoubleLE(RootAccountOffsets.MinFees);
     this.networks.splice(0);
     for (var i = 0; i < this.networksCount; ++i) {
-      const offset = RootAccountOffsets.NetworkRecords + NetworkStringLength * i;
-      this.networks.push(getStringFromBuffer(buf, offset, NetworkStringLength));
+      const offset = RootAccountOffsets.NetworkRecords + NetworkRecordLength * i;
+      let network = new NetworkRecord();
+      network.unpack(buf, offset);
+      this.networks.push(network);
     }
   }
 }
@@ -135,7 +186,8 @@ export enum TokenAccountOffsets {
   Slot = 160,
   AllTimeTradesCount = 168,
   AllTimeBaseCrncyVolume = 176,
-  AllTimeTokensVolume = 192
+  AllTimeTokensVolume = 192,
+  Validation=208
 }
 
 /**
@@ -171,6 +223,7 @@ export class TokenAccount {
   allTimeTradesCount: number = 0;
   allTimeBaseCrncyVolume: number = 0;
   allTimeTokensVolume: number = 0;
+  validation = 0;
 
   update(buf: Buffer, baseCrncyDecsFactor: number) {
     this.tag = buf.readUint32LE(TokenAccountOffsets.Tag);
@@ -188,6 +241,7 @@ export class TokenAccount {
     this.allTimeBaseCrncyVolume = Number(buf.readBigInt64LE(TokenAccountOffsets.AllTimeBaseCrncyVolume)) / baseCrncyDecsFactor;
     this.allTimeTokensVolume = Number(buf.readBigInt64LE(TokenAccountOffsets.AllTimeTokensVolume)) / baseCrncyDecsFactor;
     this.allTimeTradesCount = Number(buf.readBigInt64LE(TokenAccountOffsets.AllTimeTradesCount));
+    this.validation = buf.readUint32LE(TokenAccountOffsets.Validation);
   }
 }
 
