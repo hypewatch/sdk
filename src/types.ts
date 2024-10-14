@@ -256,8 +256,7 @@ export enum ClientAccountOffsets {
   Time = 72,
   TokensCreated = 76,
   AllTimeTradesCount = 84,
-  Nft = 88,
-  Nickname = 120,
+  Nickname = 88,
 }
 
 /**
@@ -286,7 +285,6 @@ export class ClientAccount {
   time: Date = new Date(0);
   tokensCreated: number = 0;
   allTimeTradesCount: number = 0;
-  nft: PublicKey = new PublicKey(0);
   nickname: string = "";
   
   update(buf: Buffer, baseCrncyDecsFactor: number) {
@@ -294,7 +292,6 @@ export class ClientAccount {
     this.version = buf.readUint32LE(ClientAccountOffsets.Version);
     this.id = Number(buf.readBigInt64LE(ClientAccountOffsets.Id));
     this.wallet = readPk(buf, ClientAccountOffsets.Wallet);
-    this.nft = readPk(buf, ClientAccountOffsets.Nft);
     this.nickname = getStringFromBuffer(buf, ClientAccountOffsets.Nickname, NicknameStringLength);
     this.allTimeBaseCrncyVolume = Number(buf.readBigInt64LE(ClientAccountOffsets.AllTimeBaseCrncyVolume)) / baseCrncyDecsFactor;
     this.allTimeTokensVolume = Number(buf.readBigInt64LE(ClientAccountOffsets.AllTimeTokensVolume)) / baseCrncyDecsFactor;
