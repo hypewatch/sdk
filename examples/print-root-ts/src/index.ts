@@ -44,6 +44,12 @@ async function printRoot() {
   console.log("Max networks count:", root.maxNetworksCount);
   console.log("Creation time:", root.creationTime);
   console.log("Min fees:", root.minFees);
+  console.log("Operator name:", root.operatorName);
+  console.log("URL prefix:", root.urlPrefix);
+  console.log("Ref duration:", root.refDuration);
+  console.log("Ref discount:", root.refDiscount);
+  console.log("Ref ratio:", root.refRatio);
+  console.log("Mask:", root.mask);
   for (var i = 0; i < root.networksCount; ++i) {
     console.log("  Network ID:", i);
     console.log("  Descriptor:", root.networks[i].descriptor);

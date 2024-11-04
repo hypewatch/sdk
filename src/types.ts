@@ -77,7 +77,13 @@ export enum RootAccountOffsets {
   MaxNetworksCount = 288,
   CreationTime = 292,
   MinFees = 296,
-  NetworkRecords = 304,
+  OperatorName = 304,
+  RefDuration = 336,
+  Mask = 340,
+  RefDiscount = 344,
+  RefRatio = 352,
+  UrlPrefix = 360,
+  NetworkRecords = 392,
 }
 
 /**
@@ -131,6 +137,12 @@ export class RootAccount {
   creationTime = new Date(0);
   minFees = 0;
   networks: NetworkRecord[] = [];
+  operatorName: string = "";
+  refDuration: number = 0;
+  mask: number = 38;
+  refDiscount: number = 0.05;
+  refRatio: number = 0.1;
+  urlPrefix: string = "";
   
   update(buf: Buffer) {
     this.tag = buf.readUint32LE(RootAccountOffsets.Tag);
@@ -161,6 +173,12 @@ export class RootAccount {
     this.maxNetworksCount = buf.readUint32LE(RootAccountOffsets.MaxNetworksCount);
     this.creationTime = new Date(buf.readUint32LE(RootAccountOffsets.CreationTime) * 1000);
     this.minFees = buf.readDoubleLE(RootAccountOffsets.MinFees);
+    this.operatorName = getStringFromBuffer(buf, RootAccountOffsets.OperatorName, 32);
+    this.refDuration = buf.readUint32LE(RootAccountOffsets.RefDuration);
+    this.mask = buf.readUint32LE(RootAccountOffsets.Mask);
+    this.refDiscount = buf.readDoubleLE(RootAccountOffsets.RefDiscount);
+    this.refRatio = buf.readDoubleLE(RootAccountOffsets.RefRatio);
+    this.urlPrefix = getStringFromBuffer(buf, RootAccountOffsets.UrlPrefix, 32);
     this.networks.splice(0);
     for (var i = 0; i < this.networksCount; ++i) {
       const offset = RootAccountOffsets.NetworkRecords + NetworkRecordLength * i;
@@ -255,8 +273,13 @@ export enum ClientAccountOffsets {
   Slot = 64,
   Time = 72,
   TokensCreated = 76,
+  RefStop = 80,
   AllTimeTradesCount = 84,
   Nickname = 88,
+  RefAddress = 120,
+  RefPaid = 152,
+  RefDiscount = 160,
+  RefRatio = 168
 }
 
 /**
@@ -286,6 +309,11 @@ export class ClientAccount {
   tokensCreated: number = 0;
   allTimeTradesCount: number = 0;
   nickname: string = "";
+  refStop: Date = new Date(0);
+  refAddress: PublicKey = new PublicKey(0);
+  refPaid: number = 0;
+  refDiscount: number = 0;
+  refRatio: number = 0;
   
   update(buf: Buffer, baseCrncyDecsFactor: number) {
     this.tag = buf.readUint32LE(ClientAccountOffsets.Tag);
@@ -299,6 +327,10 @@ export class ClientAccount {
     this.tokensCreated = buf.readUint32LE(ClientAccountOffsets.TokensCreated);
     this.slot = Number(buf.readBigInt64LE(ClientAccountOffsets.Slot));
     this.time = new Date(buf.readUint32LE(ClientAccountOffsets.Time) * 1000);
+    this.refAddress = readPk(buf, ClientAccountOffsets.RefAddress);
+    this.refPaid = Number(buf.readBigInt64LE(ClientAccountOffsets.RefPaid)) / baseCrncyDecsFactor;
+    this.refDiscount = buf.readDoubleLE(ClientAccountOffsets.RefDiscount);
+    this.refRatio = buf.readDoubleLE(ClientAccountOffsets.RefRatio);
   }
 }
 
@@ -472,6 +504,7 @@ export interface TradeArgs {
   address: string;
   amount: number;
   limit?: number;
+  refWallet?: PublicKey;
 }
 
 /**

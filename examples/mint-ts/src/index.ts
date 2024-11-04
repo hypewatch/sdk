@@ -66,6 +66,7 @@ async function mint() {
   const connection = new Connection(process.env.PROVIDER, "confirmed");
   const keypair = loadKeypairFromFile(process.env.KEYPAIR);
   const programId = new PublicKey(process.env.PROGRAM_ID);
+  const refWallet = new PublicKey(process.env.REF_WALLET);
   let root = new sdk.RootAccount();
   const rootAccount = sdk.findRootAccountAddress(programId, version);
   const rootAccountInfo = await connection.getAccountInfo(rootAccount);
@@ -80,7 +81,8 @@ async function mint() {
     networkId: network,
     address: address,
     nickname: nickname,
-    limit: limit
+    limit: limit,
+    refWallet: refWallet
   });
   let signers: Keypair[] = mintConfig.signers;
   signers.push(keypair);

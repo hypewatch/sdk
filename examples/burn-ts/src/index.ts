@@ -66,6 +66,7 @@ async function burn() {
   const connection = new Connection(process.env.PROVIDER, "confirmed");
   const keypair = loadKeypairFromFile(process.env.KEYPAIR);
   const programId = new PublicKey(process.env.PROGRAM_ID);
+  const refWallet = new PublicKey(process.env.REF_WALLET);
   let root = new sdk.RootAccount();
   const rootAccount = sdk.findRootAccountAddress(programId, version);
   const rootAccountInfo = await connection.getAccountInfo(rootAccount);
@@ -80,7 +81,8 @@ async function burn() {
     networkId: network,
     address: address,
     nickname: nickname,
-    limit: limit
+    limit: limit,
+    refWallet:refWallet
   });
   const transaction = new Transaction().add(instruction);
   const signature = await sendAndConfirmTransaction(

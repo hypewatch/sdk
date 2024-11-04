@@ -112,6 +112,21 @@ export async function mint(args: TradeArgs): Promise<{
         buf.writeBigInt64LE(BigInt(args.limit * 1000000), 40);
     }
     buf.write(args.address.toLowerCase(), 8, Math.min(NetworkStringLength, args.address.length), 'utf-8');
+    let refWallet: PublicKey;
+    let refAccount: PublicKey;
+    if (args.refWallet != undefined) {
+        refWallet = args.refWallet;
+        refAccount = getAssociatedTokenAddressSync(
+            args.root.baseCrncyMint,
+            args.refWallet,
+            false,
+            TOKEN_PROGRAM_ID
+        );
+    }
+    else {
+        refWallet = SystemProgram.programId;
+        refAccount = SystemProgram.programId;
+    }
     const instruction = new TransactionInstruction({
         keys: [
             { pubkey: args.wallet, isSigner: true, isWritable: true },
@@ -129,6 +144,8 @@ export async function mint(args: TradeArgs): Promise<{
             { pubkey: TOKEN_2022_PROGRAM_ID, isSigner: false, isWritable: false },
             { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
             { pubkey: ASSOCIATED_TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
+            { pubkey: refWallet, isSigner: false, isWritable: false },
+            { pubkey: refAccount, isSigner: false, isWritable: true },
         ],
         programId: args.programId,
         data: buf,
@@ -163,6 +180,21 @@ export async function burn(args: TradeArgs): Promise<TransactionInstruction> {
     if (args.limit != undefined && args.limit > 0) {
         buf.writeBigInt64LE(BigInt(args.limit * 1000000), 16);
     }
+    let refWallet: PublicKey;
+    let refAccount: PublicKey;
+    if (args.refWallet != undefined) {
+        refWallet = args.refWallet;
+        refAccount = getAssociatedTokenAddressSync(
+            args.root.baseCrncyMint,
+            args.refWallet,
+            false,
+            TOKEN_PROGRAM_ID
+        );
+    }
+    else {
+        refWallet = SystemProgram.programId;
+        refAccount = SystemProgram.programId;
+    }
     const instruction = new TransactionInstruction({
         keys: [
             { pubkey: args.wallet, isSigner: true, isWritable: true },
@@ -180,6 +212,8 @@ export async function burn(args: TradeArgs): Promise<TransactionInstruction> {
             { pubkey: TOKEN_2022_PROGRAM_ID, isSigner: false, isWritable: false },
             { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
             { pubkey: ASSOCIATED_TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
+            { pubkey: refWallet, isSigner: false, isWritable: false },
+            { pubkey: refAccount, isSigner: false, isWritable: true },
         ],
         programId: args.programId,
         data: buf,

@@ -36,7 +36,7 @@ import { Connection, PublicKey, Transaction, sendAndConfirmTransaction } from "@
 import * as sdk from '../../sdk';
 
 const connection = new Connection("YOUR_SOLANA_ENDPOINT", "confirmed"); // e.g., https://api.devnet.solana.com/
-const programId = new PublicKey("HYPE_PROGRAM_ID"); // e.g., Devnet: 8QodS2B2WD9DvHHqNeMoLiYkVmusE9rX1ZG4ZhrLfJfh
+const programId = new PublicKey("HYPE_PROGRAM_ID"); // e.g., Devnet: 5k9VtrtQZWu56qz41cZJmQJTr1CGuSQZE2EEJT77PZUg
 ```
 
 ### Mint Tokens
@@ -45,10 +45,10 @@ const programId = new PublicKey("HYPE_PROGRAM_ID"); // e.g., Devnet: 8QodS2B2WD9
 // Get mint instruction
 const mintConfig = await sdk.mint({
     wallet: walletPublicKey, // Solana wallet address
-    rootAccount: rootAccountAddress, // Root account address (e.g., BB5npXyx3qTMMMWfQiMSL5eoH98Cu3435GhidWo81UJa)
+    rootAccount: rootAccountAddress, // Root account address
     root: rootAccountInstance, // Instance of the root account
     amount: tokenAmount, // Amount to mint (e.g., 1 token = 1)
-    programId: programId, // Program ID (e.g., 8QodS2B2WD9DvHHqNeMoLiYkVmusE9rX1ZG4ZhrLfJfh)
+    programId: programId, // Program ID (e.g., 5k9VtrtQZWu56qz41cZJmQJTr1CGuSQZE2EEJT77PZUg)
     connection: connection, // Connection to the Solana cluster
     networkId: networkId, // Network ID (0 = Twitter, 1 = Telegram, 2 = Facebook, 3 = Instagram)
     address: socialNetworkAddress, // Token mint address (e.g., durov, elonmusk)
@@ -70,10 +70,10 @@ const signature = await sendAndConfirmTransaction(
 ```typescript
 const burnInstruction = await sdk.burn({
     wallet: walletPublicKey, // Solana wallet address
-    rootAccount: rootAccountAddress, // Root account address (e.g., BB5npXyx3qTMMMWfQiMSL5eoH98Cu3435GhidWo81UJa)
+    rootAccount: rootAccountAddress, // Root account address
     root: rootAccountInstance, // Instance of the root account
     amount: tokenAmount, // Amount to burn (e.g., 1 token = 1)
-    programId: programId, // Program ID (e.g., 8QodS2B2WD9DvHHqNeMoLiYkVmusE9rX1ZG4ZhrLfJfh)
+    programId: programId, // Program ID (e.g., 5k9VtrtQZWu56qz41cZJmQJTr1CGuSQZE2EEJT77PZUg)
     connection: connection, // Connection to the Solana cluster
     networkId: networkId, // Network ID (0 = Twitter, 1 = Telegram, 2 = Facebook, 3 = Instagram)
     address: socialNetworkAddress, // Token mint address
@@ -119,8 +119,8 @@ root.update(rootAccountInfo.data); // Update the root account with the retrieved
 
 ## Current Parameters
 
-- Program ID: `8QodS2B2WD9DvHHqNeMoLiYkVmusE9rX1ZG4ZhrLfJfh`
-- Version: `4`
+- Program ID: `5k9VtrtQZWu56qz41cZJmQJTr1CGuSQZE2EEJT77PZUg`
+- Version: `2`
 
 ## Examples
 
