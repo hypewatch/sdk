@@ -28,6 +28,12 @@ function getStringFromBuffer(buf: Buffer, start: number, maxLength: number): str
   return str;
 }
 
+export enum TokenStatus {
+  NotChecked=0,
+  Verified = 1,
+  NotVerified = 2,
+}
+
 export enum NetworkRecordOffsets {
   MaxLength=0,
   Validator = 8,
@@ -508,17 +514,29 @@ export interface TradeArgs {
 }
 
 /**
- * @property {Connection} connection @solana/web3.js Connection
  * @property {RootAccount} root RootAccount instance
  * @property {PublicKey} wallet Client's wallet address
  * @property {string} nickname New client's nickname 
  * @property {PublicKey} programId Smart contract address
  */
 export interface ChangeClientDataArgs {
-  connection: Connection;
   root: RootAccount;
   wallet: PublicKey;
   nickname: string;
   programId: PublicKey;
 }
 
+/**
+ * @property {PublicKey} rootAccount RootAccount PublicKey
+ * @property {PublicKey} tokenAccount TokenAccount PublicKey
+ * @property {PublicKey} validator Validator PublicKey
+ * @property {PublicKey} programId Smart contract address
+ * @property {boolean} verified true if ok
+ */
+export interface ChangeTokenStatusArgs {
+  rootAccount: PublicKey;
+  tokenAccount: PublicKey;
+  validator: PublicKey;
+  programId: PublicKey;
+  verified: boolean;
+}

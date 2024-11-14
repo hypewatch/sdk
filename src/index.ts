@@ -4,6 +4,7 @@ import {
     NicknameStringLength,
     NetworkStringLength,
     ChangeClientDataArgs,
+    ChangeTokenStatusArgs,
 } from './types';
 import {
     ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID
@@ -231,6 +232,23 @@ export function changeClientData(args: ChangeClientDataArgs): TransactionInstruc
         keys: [
             { pubkey: args.wallet, isSigner: true, isWritable: true },
             { pubkey: clientAccount, isSigner: false, isWritable: true },
+        ],
+        programId: args.programId,
+        data: buf,
+    });
+    return instruction;
+}
+
+export function changeTokenStatus(args: ChangeTokenStatusArgs): TransactionInstruction {
+    var buf: Buffer;
+    buf = Buffer.alloc(2);
+    buf.writeUint8(7, 0);
+    buf.writeUint8(args.verified ? 1 : 2, 1);
+    const instruction = new TransactionInstruction({
+        keys: [
+            { pubkey: args.validator, isSigner: true, isWritable: true },
+            { pubkey: args.rootAccount, isSigner: false, isWritable: false },
+            { pubkey: args.tokenAccount, isSigner: false, isWritable: true },
         ],
         programId: args.programId,
         data: buf,
