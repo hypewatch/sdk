@@ -324,6 +324,7 @@ export function getReports(logs: string[], decsFactor: number): Report[] {
                             baseCrncyAmount: getU64(fields[14]) / decsFactor,
                             time: getTime(fields[15]),
                             slot: getU64(fields[16]),
+                            wallet: fields.length == 18 ? new PublicKey(Buffer.from(fields[17], 'base64')) : undefined,
                         }
                     });
                     break;
@@ -348,6 +349,7 @@ export function getReports(logs: string[], decsFactor: number): Report[] {
                             baseCrncyAmount: getU64(fields[14]) / decsFactor,
                             time: getTime(fields[15]),
                             slot: getU64(fields[16]),
+                            wallet: fields.length == 18 ? new PublicKey(Buffer.from(fields[17], 'base64')) : undefined,
                         }
                     });
                     break;

@@ -433,6 +433,7 @@ export interface MintReport {
   networkId: number;
   mint: PublicKey;
   creator: PublicKey;
+  wallet?: PublicKey;
   address: string;
   supply: number;
   creationTime: Date;
@@ -470,6 +471,7 @@ export interface BurnReport {
   networkId: number;
   mint: PublicKey;
   creator: PublicKey;
+  wallet?: PublicKey;
   address: string;
   supply: number;
   creationTime: Date;
