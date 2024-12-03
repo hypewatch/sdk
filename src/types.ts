@@ -76,7 +76,7 @@ export enum RootAccountOffsets {
   AllTimeTokensVolume = 224,
   HolderFees = 240,
   InitPrice = 248,
-  Slope = 256,
+  MaxSupply = 256,
   FeeRatio = 264,
   FeeRate = 272,
   CreationFee = 280,
@@ -134,8 +134,8 @@ export class RootAccount {
   allTimeBaseCrncyVolume: number = 0;
   allTimeTokensVolume: number = 0;
   holderFees: number = 0;
-  initPrice: number = 1;
-  slope: number = 0.0001;
+  initPrice: number = 0.1;
+  maxSupply: number = 10000;
   feeRatio = 0.7;
   feeRate = 0.01;
   creationFee = 1;
@@ -172,7 +172,7 @@ export class RootAccount {
     this.allTimeTokensVolume = Number(buf.readBigInt64LE(RootAccountOffsets.AllTimeTokensVolume)) / this.baseCrncyDecsFactor;
     this.holderFees = Number(buf.readBigInt64LE(RootAccountOffsets.HolderFees)) / this.baseCrncyDecsFactor;
     this.initPrice = buf.readDoubleLE(RootAccountOffsets.InitPrice);
-    this.slope = buf.readDoubleLE(RootAccountOffsets.Slope);
+    this.maxSupply = Number(buf.readBigInt64LE(RootAccountOffsets.MaxSupply)) / this.baseCrncyDecsFactor;
     this.feeRatio = buf.readDoubleLE(RootAccountOffsets.FeeRatio);
     this.feeRate = buf.readDoubleLE(RootAccountOffsets.FeeRate);
     this.creationFee = buf.readDoubleLE(RootAccountOffsets.CreationFee);

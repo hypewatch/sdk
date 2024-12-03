@@ -7,7 +7,7 @@ import {
 } from "@solana/web3.js";
 import * as fs from "fs";
 import * as dotenv from "dotenv";
-import * as sdk from '../../sdk';
+import * as sdk from '../../../../sdk';
 
 function loadKeypairFromFile(filePath: string): Keypair {
   try {

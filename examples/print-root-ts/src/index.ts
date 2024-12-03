@@ -3,7 +3,7 @@ import {
   PublicKey,
 } from "@solana/web3.js";
 import * as dotenv from "dotenv";
-import * as sdk from '../../sdk';
+import * as sdk from '../../../../sdk';
 
 dotenv.config();
 
@@ -37,7 +37,7 @@ async function printRoot() {
   console.log("Last Time:", root.time);
   console.log("Holder fees:", root.holderFees);
   console.log("Init price:", root.initPrice);
-  console.log("Slope:", root.slope);
+  console.log("Max Supply:", root.maxSupply);
   console.log("Fee ratio:", root.feeRatio);
   console.log("Fee rate:", root.feeRate);
   console.log("Creation fee:", root.creationFee);
