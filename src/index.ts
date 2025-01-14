@@ -105,14 +105,14 @@ export async function mint(args: TradeArgs): Promise<{
     var buf = Buffer.alloc(80);
     buf.writeUint8(4, 0);
     buf.writeUint32LE(args.networkId, 4);
-    buf.writeBigInt64LE(BigInt(args.amount * 1000000), 32);
+    buf.writeBigInt64LE(BigInt(args.amount * 1000000), 8);
     if (args.nickname != undefined) {
         buf.write(args.nickname, 48, Math.min(NicknameStringLength, args.nickname.length), 'utf-8');
     }
     if (args.limit != undefined && args.limit > 0) {
-        buf.writeBigInt64LE(BigInt(args.limit * 1000000), 40);
+        buf.writeBigInt64LE(BigInt(args.limit * 1000000), 16);
     }
-    buf.write(args.address.toLowerCase(), 8, Math.min(NetworkStringLength, args.address.length), 'utf-8');
+    buf.write(args.address.toLowerCase(), 24, Math.min(NetworkStringLength, args.address.length), 'utf-8');
     let refWallet: PublicKey;
     let refAccount: PublicKey;
     if (args.refWallet != undefined) {
@@ -131,10 +131,10 @@ export async function mint(args: TradeArgs): Promise<{
     const instruction = new TransactionInstruction({
         keys: [
             { pubkey: args.wallet, isSigner: true, isWritable: true },
+            { pubkey: args.rootAccount, isSigner: false, isWritable: true },
             { pubkey: clientAccount, isSigner: false, isWritable: true },
             { pubkey: aTokenAcc, isSigner: false, isWritable: true },
             { pubkey: aHypeAcc, isSigner: false, isWritable: true },
-            { pubkey: args.rootAccount, isSigner: false, isWritable: true },
             { pubkey: tokenAccount, isSigner: false, isWritable: true },
             { pubkey: args.root.baseCrncyMint, isSigner: false, isWritable: false },
             { pubkey: args.root.baseCrncyProgramAddress, isSigner: false, isWritable: true },
@@ -174,6 +174,7 @@ export async function burn(args: TradeArgs): Promise<TransactionInstruction> {
     var buf: Buffer;
     buf= Buffer.alloc(56);
     buf.writeUint8(5, 0);
+    buf.writeUint32LE(args.networkId, 4);
     buf.writeBigInt64LE(BigInt(args.amount * 1000000), 8);
     if (args.nickname != undefined) {
         buf.write(args.nickname, 24, Math.min(NicknameStringLength, args.nickname.length), 'utf-8');
@@ -199,10 +200,10 @@ export async function burn(args: TradeArgs): Promise<TransactionInstruction> {
     const instruction = new TransactionInstruction({
         keys: [
             { pubkey: args.wallet, isSigner: true, isWritable: true },
+            { pubkey: args.rootAccount, isSigner: false, isWritable: true },
             { pubkey: clientAccount, isSigner: false, isWritable: true },
             { pubkey: aTokenAcc, isSigner: false, isWritable: true },
             { pubkey: aHypeAcc, isSigner: false, isWritable: true },
-            { pubkey: args.rootAccount, isSigner: false, isWritable: true },
             { pubkey: tokenAccount, isSigner: false, isWritable: true },
             { pubkey: args.root.baseCrncyMint, isSigner: false, isWritable: false },
             { pubkey: args.root.baseCrncyProgramAddress, isSigner: false, isWritable: true },
@@ -231,6 +232,7 @@ export function changeClientData(args: ChangeClientDataArgs): TransactionInstruc
     const instruction = new TransactionInstruction({
         keys: [
             { pubkey: args.wallet, isSigner: true, isWritable: true },
+            { pubkey: args.rootAccount, isSigner: false, isWritable: false },
             { pubkey: clientAccount, isSigner: false, isWritable: true },
         ],
         programId: args.programId,
@@ -241,9 +243,10 @@ export function changeClientData(args: ChangeClientDataArgs): TransactionInstruc
 
 export function changeTokenStatus(args: ChangeTokenStatusArgs): TransactionInstruction {
     var buf: Buffer;
-    buf = Buffer.alloc(2);
+    buf = Buffer.alloc(8);
     buf.writeUint8(7, 0);
     buf.writeUint8(args.verified ? 1 : 2, 1);
+    buf.writeUint32LE(args.networkId, 4);
     const instruction = new TransactionInstruction({
         keys: [
             { pubkey: args.validator, isSigner: true, isWritable: true },
@@ -271,6 +274,7 @@ export function getReports(logs: string[], decsFactor: number): Report[] {
                             wallet: new PublicKey(Buffer.from(fields[3], 'base64')),
                             time: getTime(fields[4]),
                             slot: getU64(fields[5]),
+                            nickname: getString(fields[6]),
                         }
                     });
                     break;
@@ -324,7 +328,8 @@ export function getReports(logs: string[], decsFactor: number): Report[] {
                             baseCrncyAmount: getU64(fields[14]) / decsFactor,
                             time: getTime(fields[15]),
                             slot: getU64(fields[16]),
-                            wallet: fields.length == 18 ? new PublicKey(Buffer.from(fields[17], 'base64')) : undefined,
+                            wallet: new PublicKey(Buffer.from(fields[17], 'base64')),
+                            nickname: getString(fields[18]),
                         }
                     });
                     break;
@@ -349,7 +354,8 @@ export function getReports(logs: string[], decsFactor: number): Report[] {
                             baseCrncyAmount: getU64(fields[14]) / decsFactor,
                             time: getTime(fields[15]),
                             slot: getU64(fields[16]),
-                            wallet: fields.length == 18 ? new PublicKey(Buffer.from(fields[17], 'base64')) : undefined,
+                            wallet: new PublicKey(Buffer.from(fields[17], 'base64')),
+                            nickname: getString(fields[18]),
                         }
                     });
                     break;

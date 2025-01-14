@@ -1,6 +1,6 @@
 {
   "name": "@hypewatch/sdk",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -9,7 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepack": "npm run build"
   },
-  "author": "Hype.watch",
+  "author": "Hype.fun",
   "license": "Apache-2.0",
   "devDependencies": {
     "typedoc": "^0.25.13",

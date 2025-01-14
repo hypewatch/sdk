@@ -179,7 +179,7 @@ export class RootAccount {
     this.maxNetworksCount = buf.readUint32LE(RootAccountOffsets.MaxNetworksCount);
     this.creationTime = new Date(buf.readUint32LE(RootAccountOffsets.CreationTime) * 1000);
     this.minFees = buf.readDoubleLE(RootAccountOffsets.MinFees);
-    this.operatorName = getStringFromBuffer(buf, RootAccountOffsets.OperatorName, 32);
+    this.operatorName = getStringFromBuffer(buf, RootAccountOffsets.OperatorName, 24);
     this.refDuration = buf.readUint32LE(RootAccountOffsets.RefDuration);
     this.mask = buf.readUint32LE(RootAccountOffsets.Mask);
     this.refDiscount = buf.readDoubleLE(RootAccountOffsets.RefDiscount);
@@ -368,6 +368,7 @@ export interface NewClientReport {
   orderId: number;
   clientId: number;
   wallet: PublicKey;
+  nickname: string;
   time: Date;
   slot: number;
 }
@@ -433,8 +434,9 @@ export interface MintReport {
   networkId: number;
   mint: PublicKey;
   creator: PublicKey;
-  wallet?: PublicKey;
+  wallet: PublicKey;
   address: string;
+  nickname: string;
   supply: number;
   creationTime: Date;
   allTimeTradesCount: number;
@@ -471,8 +473,9 @@ export interface BurnReport {
   networkId: number;
   mint: PublicKey;
   creator: PublicKey;
-  wallet?: PublicKey;
+  wallet: PublicKey;
   address: string;
+  nickname: string;
   supply: number;
   creationTime: Date;
   allTimeTradesCount: number;
@@ -506,7 +509,7 @@ export interface TradeArgs {
   root: RootAccount;
   rootAccount: PublicKey;
   wallet: PublicKey;
-  nickname?: string;
+  nickname: string;
   programId: PublicKey;
   networkId: number;
   address: string;
@@ -523,6 +526,7 @@ export interface TradeArgs {
  */
 export interface ChangeClientDataArgs {
   root: RootAccount;
+  rootAccount: PublicKey;
   wallet: PublicKey;
   nickname: string;
   programId: PublicKey;
@@ -540,5 +544,6 @@ export interface ChangeTokenStatusArgs {
   tokenAccount: PublicKey;
   validator: PublicKey;
   programId: PublicKey;
+  networkId: number;
   verified: boolean;
 }
