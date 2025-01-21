@@ -241,17 +241,28 @@ export function changeClientData(args: ChangeClientDataArgs): TransactionInstruc
     return instruction;
 }
 
-export function changeTokenStatus(args: ChangeTokenStatusArgs): TransactionInstruction {
+export async function changeTokenStatus(args: ChangeTokenStatusArgs): Promise<TransactionInstruction> {
     var buf: Buffer;
     buf = Buffer.alloc(8);
     buf.writeUint8(7, 0);
     buf.writeUint8(args.verified ? 1 : 2, 1);
     buf.writeUint32LE(args.networkId, 4);
+
+    const tokenAccountInfo = await args.connection.getAccountInfo(args.tokenAccount);
+    let tokenMint = readPk(tokenAccountInfo.data, 16);
+    const aHypeAcc = getAssociatedTokenAddressSync(
+      tokenMint,
+      args.tokenCreatorAccount,
+      false,
+      TOKEN_2022_PROGRAM_ID
+    );
+
     const instruction = new TransactionInstruction({
         keys: [
             { pubkey: args.validator, isSigner: true, isWritable: true },
             { pubkey: args.rootAccount, isSigner: false, isWritable: false },
             { pubkey: args.tokenAccount, isSigner: false, isWritable: true },
+            { pubkey: aHypeAcc, isSigner: false, isWritable: true },
         ],
         programId: args.programId,
         data: buf,
