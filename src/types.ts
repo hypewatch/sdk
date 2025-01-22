@@ -540,10 +540,8 @@ export interface ChangeClientDataArgs {
  * @property {boolean} verified true if ok
  */
 export interface ChangeTokenStatusArgs {
-  connection: Connection;
   rootAccount: PublicKey;
   tokenAccount: PublicKey;
-  tokenCreatorAccount: PublicKey;
   validator: PublicKey;
   programId: PublicKey;
   networkId: number;
